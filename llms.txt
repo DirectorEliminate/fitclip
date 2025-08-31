@@ -1,0 +1,53 @@
+# Fitclip
+
+> Fitclip is a free, open-source Discord video compressor for Windows, macOS and Linux that trims and compresses any video or Twitch clip on your own PC to fit Discord's upload limit: 20 MB free, 50 MB Nitro Basic or 500 MB Nitro.
+
+Fitclip is a desktop app for people who get "file too large" when they send a clip on Discord. You drop a file, or paste a Twitch, Medal or YouTube link, drag the handles to keep the part you want, pick a Discord plan and press Compress. The finished MP4 is copied to the clipboard, so you paste it straight into the Discord chat.
+
+Instead of a quality slider, Fitclip works backwards from the size you need: target size is the limit minus a 3% margin, the bitrate follows from the clip length, and it picks the largest resolution (1080p, 900p, 720p, then lower) that keeps at least 0.07 bits per pixel, halving the frame rate if needed. The encode is two-pass, so the file lands just under the target. Example: a 57.2 MB, 60-second 1080p60 Twitch clip trimmed to 25 seconds becomes 19.2 MB at 1600x900, 60 fps.
+
+Compression runs locally with FFmpeg; videos are never uploaded. Fitclip does not support private, subscriber-only or DRM-protected videos, and it is not made by or affiliated with Discord, Twitch, Medal or YouTube.
+
+## Key facts
+
+- Price: free, no watermark, no ads, no account, no paid tier
+- License: MIT; bundles FFmpeg (LGPL 2.1+, with GPL components such as x264/x265) and yt-dlp (Unlicense)
+- Platforms: Windows 10 / 11 (x64), macOS 12+ (Apple Silicon and Intel), Linux (x64, AppImage and .deb)
+- Version: 1.0.0
+- Offline/privacy: works offline; the only network requests are link downloads you start and a once-a-day update check for the app and yt-dlp, which can be turned off; no telemetry
+- Discord limits used by the presets (at time of writing, November 2026): free 20 MB (raised from 10 MB on 13 August 2026), Nitro Basic 50 MB, Nitro 500 MB, Boost Level 2 server 50 MB, Boost Level 3 server 100 MB
+- Requirements: 64-bit OS, 4 GB RAM, about 250 MB of disk; a GPU encoder (NVENC, Quick Sync, AMF, VideoToolbox) is optional
+- No input file size cap
+
+## Features
+
+- Fit to 20 MB Free, 50 MB Nitro Basic, 500 MB Nitro or any custom size, two-pass, aimed 3% under the limit
+- Automatic resolution and frame rate from the bitrate math, with every value overridable
+- Trim strip with handles and a frame-accurate cut screen with the audio waveform
+- Twitch clips, highlights and VODs, Medal, YouTube and Shorts, and other public sites supported by yt-dlp
+- Result copied to the clipboard, ready to paste into Discord
+- Batch queue: one target for a folder of clips; files that already fit are skipped
+- H.264 by default for inline playback, H.265 and AV1 for smaller files, GPU encoders when available
+- Input from MP4, MOV, MKV, WEBM, AVI and anything FFmpeg reads, including OBS, ShadowPlay, Xbox Game Bar and AMD ReLive recordings
+- Drag and drop, and a right-click "Fit for Discord" entry in Windows Explorer
+
+## Common questions
+
+- How do I compress a video for Discord? — Drop the video on Fitclip (or paste a link), trim it, leave the plan on 20 MB Free or pick your Nitro plan and press Compress. The result is on your clipboard; paste it into Discord with Ctrl+V.
+- What is the Discord file size limit? Is it still 10 MB? — No. At time of writing, free accounts can upload files up to 20 MB; Nitro Basic allows 50 MB and Nitro 500 MB.
+- How do I send a Twitch clip to Discord? — Paste the clips.twitch.tv link into Fitclip: yt-dlp downloads it, you trim it, Fitclip makes it fit and you paste the file into Discord.
+- How long can a video be and still fit in 20 MB? — About 25 to 30 seconds keeps 1080p or 900p at 60 fps for game footage, about a minute gives 720p at 30 fps, and roughly 5 minutes is the longest that still looks clean at 360p.
+- How can I compress a video without losing quality? — Some loss is unavoidable, but trimming first, letting Fitclip pick the resolution and using two-pass encoding keep it hard to see.
+- Does Fitclip upload my videos anywhere? — No. Compression runs locally with FFmpeg.
+- Can I compress many videos at once? — Yes. The batch queue fits a folder of clips to one target, two at a time.
+- Is Fitclip free? Is there a watermark? — Yes, it is free and open source under MIT, and there is no watermark.
+- Is Fitclip made by Discord or Twitch? — No. It is an independent open-source project.
+
+## Links
+
+- [README](https://github.com/DirectorEliminate/fitclip#readme): the bitrate math, features, supported sources, Discord limits, download and FAQ
+- [Download](https://github.com/DirectorEliminate/fitclip/releases/latest): Windows installer and portable zip, macOS universal DMG, Linux AppImage and .deb, SHA256SUMS.txt
+- [README en español](https://github.com/DirectorEliminate/fitclip/blob/main/README.es.md): Spanish version of the README
+- [README بالعربية](https://github.com/DirectorEliminate/fitclip/blob/main/README.ar.md): Arabic (right-to-left) version of the README
+- [README हिन्दी में](https://github.com/DirectorEliminate/fitclip/blob/main/README.hi.md): Hindi version of the README
+- [README 简体中文版](https://github.com/DirectorEliminate/fitclip/blob/main/README.zh-CN.md): Simplified Chinese version of the README
