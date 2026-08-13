@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Community chat — quick help
+    url: https://github.com/DISCORD_INVITE
+    about: Fastest way to get help with sizes, links and settings.
+  - name: Ideas and votes
+    url: https://github.com/DirectorEliminate/fitclip/discussions/categories/ideas
+    about: Suggest and upvote features.
+  - name: Security vulnerability
+    url: https://github.com/DirectorEliminate/fitclip/security/advisories/new
+    about: Please report security issues privately.

@@ -1,0 +1,25 @@
+name: Feature request
+description: Suggest a feature or improvement for Fitclip
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      placeholder: "When I share clips from the OBS replay buffer I always have to…"
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: How should it work? For a new preset or source site, add the exact limit or an example link.
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Checks
+      options:
+        - label: I searched existing issues and Discussions
+          required: true
+        - label: The idea works offline, or only needs the network for a download the user starts
+          required: true

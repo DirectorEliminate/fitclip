@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Fitclip — app UI (all screens, #screen=compress|trim|batch|import|output|settings)</title>
+<link rel="stylesheet" href="fitclip.css">
+<style>
+/* ===== compress (main, approved reference) ===== */
+#s-compress{grid-template-columns:740px 1fr;gap:34px}
+.left{display:flex;flex-direction:column;gap:12px;min-height:0}
+.left .video{flex:1}
+.right{display:flex;flex-direction:column;padding-top:6px;min-width:0}
+.fits{align-self:flex-start}
+.from{margin-top:22px;color:var(--text-3);font-size:30px;font-weight:600;text-decoration:line-through;text-decoration-thickness:2px;height:38px}
+.to{font-size:116px;font-weight:700;letter-spacing:-.05em;line-height:.9;color:var(--text)}
+.to small{font-size:34px;letter-spacing:-.02em;margin-left:6px;color:var(--text-2)}
+.meter{margin-top:26px}
+.mbar{height:12px;border-radius:999px;background:var(--raise);position:relative}
+.mbar i{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:var(--acc)}
+.mbar i.over{background:var(--over)}
+.mbar b{position:absolute;top:-6px;bottom:-6px;width:2px;background:var(--text)}
+.mlab{display:flex;justify-content:space-between;margin-top:10px;font-size:12.5px;color:var(--text-2)}
+.mlab b{color:var(--text);font-weight:600}
+.plans{grid-template-columns:repeat(4,1fr);margin-top:24px}
+.plans span{height:52px}
+.plans span b{font-size:15px}
+.spec{display:flex;gap:16px;margin-top:16px;color:var(--text-2);font-size:13px;white-space:nowrap}
+.spec b{color:var(--text);font-weight:600}
+.recent{margin-top:26px;border-top:1px solid var(--line)}
+.right .btn{margin-top:auto}
+
+/* ===== trim / precise cut ===== */
+#s-trim{grid-template-columns:1fr 380px;grid-template-rows:1fr auto;gap:18px 30px}
+.tleft{display:flex;flex-direction:column;gap:12px;min-height:0}
+.tleft .video{flex:1}
+.transport{display:flex;align-items:center;gap:8px;height:40px}
+.tbtn{width:40px;height:40px;border-radius:12px;background:var(--panel);border:1px solid var(--line);display:grid;place-items:center;color:var(--text)}
+.tbtn.big{background:#fff;color:var(--bg);border-color:#fff;border-radius:50%}
+.tc{font-size:22px;font-weight:600;letter-spacing:-.01em;margin-left:10px}
+.tc small{font-size:14px;color:var(--text-3);font-weight:500;margin-left:6px}
+.transport .sp{flex:1}
+.transport .pill{height:32px}
+.tpanel{grid-column:1;grid-row:2;padding:14px 18px 14px}
+.ruler{position:relative;height:18px;color:var(--text-3);font-size:11.5px}
+.ruler span{position:absolute;top:0;transform:translateX(-50%)}
+.ruler span::after{content:"";position:absolute;left:50%;top:15px;width:1px;height:5px;background:var(--line-2)}
+.zt{position:relative;margin-top:6px}
+.zthumbs{display:grid;grid-template-columns:repeat(20,1fr);gap:2px;height:54px;border-radius:10px;overflow:hidden}
+.zthumbs img{width:100%;height:100%;object-fit:cover;display:block}
+.zwave{height:46px;margin-top:6px}
+.zt .dim{border-radius:0}
+.zt .sel{top:-4px;bottom:-4px}
+.zt .ph{top:-8px;bottom:-8px}
+.zt .ph::before{content:"";position:absolute;top:-6px;left:-5px;width:13px;height:9px;background:#fff;border-radius:3px}
+.hlab{position:absolute;top:-30px;transform:translateX(-50%);background:var(--acc);color:var(--acc-ink);font-size:11.5px;font-weight:700;padding:3px 7px;border-radius:6px;white-space:nowrap}
+.tfoot{display:flex;align-items:center;gap:18px;margin-top:14px;color:var(--text-2);font-size:12.5px}
+.tfoot .sp{flex:1}
+.zoom{display:flex;align-items:center;gap:10px}
+.zoom .track{width:120px;height:4px;border-radius:2px;background:var(--raise);position:relative}
+.zoom .track i{position:absolute;left:0;top:0;bottom:0;width:55%;background:var(--text-2);border-radius:2px}
+.zoom .track b{position:absolute;left:55%;top:-5px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--text)}
+.tright{grid-column:2;grid-row:1 / span 2;display:flex;flex-direction:column;min-height:0;padding-top:4px}
+.field{display:flex;align-items:center;gap:8px;margin-top:10px}
+.field .k{width:38px;color:var(--text-2);font-size:13px}
+.field .v{flex:1;height:44px;border-radius:12px;background:var(--panel);border:1px solid var(--line);display:flex;align-items:center;padding:0 14px;font-size:18px;font-weight:600}
+.field .v.on{border-color:var(--acc)}
+.field .nb{height:44px;padding:0 10px;border-radius:12px;background:var(--raise);display:grid;place-items:center;font-size:12.5px;font-weight:600;color:var(--text-2)}
+.len{margin-top:14px;color:var(--text-2);font-size:13px}
+.len b{color:var(--text);font-weight:600}
+.blk{margin-top:22px}
+.blk .lbl{display:block;margin-bottom:8px}
+.cutmode{grid-template-columns:1fr 1fr}
+.cutmode span{height:54px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.row small{display:block;color:var(--text-3);font-size:12px;margin-top:2px}
+.keys{display:flex;flex-wrap:wrap;gap:8px 14px;color:var(--text-2);font-size:12.5px}
+.keys span{display:flex;align-items:center;gap:6px}
+.tright .btn{margin-top:auto}
+
+/* ===== batch queue ===== */
+#s-batch{grid-template-columns:1fr 384px;gap:30px}
+.bleft{display:flex;flex-direction:column;min-height:0}
+.bhead{display:flex;align-items:flex-end;justify-content:space-between;padding:6px 0 16px}
+.bhead .acts{display:flex;gap:8px}
+.qhead{display:grid;grid-template-columns:96px 1fr 92px 150px 170px;gap:16px;padding:0 0 8px;border-bottom:1px solid var(--line)}
+.q{display:grid;grid-template-columns:96px 1fr 92px 150px 170px;gap:16px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+.q img{width:96px;height:54px;border-radius:8px}
+.q .n{min-width:0;font-weight:500}
+.q .n div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.q .n small{display:block;color:var(--text-3);font-size:12px;margin-top:3px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.q .d{color:var(--text-2)}
+.q .sz{color:var(--text-2);white-space:nowrap}
+.q .sz b{color:var(--text);font-weight:600}
+.q .sz b.a{color:var(--acc)}
+.q .st{display:flex;flex-direction:column;gap:7px;font-size:12.5px;color:var(--text-2)}
+.q .st .t{display:flex;align-items:center;gap:7px;white-space:nowrap}
+.q .st .t b{color:var(--text);font-weight:600}
+.q .st .t.okt b{color:var(--acc)}
+.drop{margin-top:16px;flex:1;min-height:90px;border-radius:16px;position:relative;display:flex;align-items:center;justify-content:center;gap:14px;color:var(--text-2)}
+.drop svg.dash{position:absolute;inset:0;width:100%;height:100%}
+.drop b{color:var(--text);font-weight:600}
+.drop .ic{width:40px;height:40px;border-radius:12px;background:var(--raise);display:grid;place-items:center;color:var(--acc)}
+.bright{display:flex;flex-direction:column;min-height:0;padding-top:6px}
+.bright .from{margin-top:16px;font-size:26px;height:32px}
+.bright .to{font-size:84px}
+.bright .to small{font-size:28px}
+.bstat{display:flex;gap:18px;margin-top:14px;color:var(--text-2);font-size:13px}
+.bstat b{color:var(--text);font-weight:600}
+.tgt4{grid-template-columns:repeat(4,1fr)}
+.tgt4 span{height:46px}
+.after3{grid-template-columns:repeat(3,1fr)}
+.bright .btn{margin-top:auto}
+
+/* ===== link import ===== */
+#s-import{grid-template-columns:740px 1fr;gap:34px}
+.ileft{display:flex;flex-direction:column;gap:12px;min-height:0}
+.ileft .video{flex:1}
+.ileft .video img.frame{opacity:.32}
+.dl{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:420px;text-align:center}
+.dl .pct{font-size:96px;font-weight:700;letter-spacing:-.05em;line-height:1}
+.dl .pct small{font-size:32px;color:var(--text-2);margin-left:4px}
+.dl .what{margin-top:10px;color:var(--text-2);font-size:14px}
+.dl .what b{color:var(--text);font-weight:600}
+.dl .bar-p{margin-top:22px;height:10px}
+.dl .nums{display:flex;justify-content:space-between;margin-top:10px;color:var(--text-2);font-size:12.5px}
+.dl .nums b{color:var(--text);font-weight:600}
+.steps{height:72px;flex:none;display:grid;grid-template-columns:repeat(4,1fr);gap:3px;border-radius:12px;overflow:hidden}
+.step{background:var(--panel);display:flex;align-items:center;gap:12px;padding:0 16px;font-size:13px;color:var(--text-2)}
+.step b{display:block;color:var(--text);font-weight:600;font-size:13.5px}
+.step .no{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line-2);display:grid;place-items:center;font-size:11.5px;font-weight:700;color:var(--text-3);flex:none}
+.step.done .no{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
+.step.now .no{border-color:var(--acc);color:var(--acc)}
+.iright{display:flex;flex-direction:column;min-height:0;padding-top:6px}
+.src{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.src .ic{width:32px;height:32px;border-radius:9px;background:var(--panel);border:1px solid var(--line);display:grid;place-items:center;color:var(--text-2);flex:none}
+.src .n{flex:1}
+.src .n small{display:block;color:var(--text-3);font-size:12px}
+.src .ok{color:var(--acc);font-size:12.5px;font-weight:600}
+.q3{grid-template-columns:repeat(3,1fr)}
+.iright .btn{margin-top:auto}
+
+/* ===== output settings ===== */
+#s-output{grid-template-columns:1fr 400px;gap:30px}
+.oleft{display:flex;flex-direction:column;min-height:0;padding-top:6px}
+.codecs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.codec{border-radius:14px;background:var(--panel);border:1px solid var(--line);padding:14px 16px;position:relative}
+.codec.on{border-color:var(--acc)}
+.codec b{font-size:17px;font-weight:700;display:block}
+.codec.on b{color:var(--acc)}
+.codec small{display:block;color:var(--text-2);font-size:12.5px;margin-top:4px;line-height:1.4}
+.codec .ck{position:absolute;top:14px;right:14px}
+.orow{display:grid;grid-template-columns:170px 1fr;align-items:center;gap:16px;padding:10px 0;border-bottom:1px solid var(--line)}
+.orow:first-of-type{border-top:1px solid var(--line)}
+.orow .k{font-size:13.5px;font-weight:500}
+.orow .k small{display:block;color:var(--text-3);font-size:12px;font-weight:400;margin-top:2px}
+.orow .seg{padding:4px;border-radius:12px}
+.orow .seg span{min-height:32px;border-radius:8px}
+.orow .tg{display:flex;align-items:center;justify-content:space-between;color:var(--text-2);font-size:13px}
+.oright{display:flex;flex-direction:column;min-height:0;padding:20px 22px}
+.math{margin-top:14px}
+.mline{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px;color:var(--text-2)}
+.mline b{color:var(--text);font-weight:600;font-size:14.5px}
+.mline.tot{border-bottom:0;padding-top:12px}
+.mline.tot b{color:var(--acc);font-size:22px}
+.formula{margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--bg);border:1px solid var(--line);font-size:13px;color:var(--text-2);line-height:1.6}
+.formula b{color:var(--text);font-weight:600}
+.ladder{margin-top:16px}
+.lrow{display:grid;grid-template-columns:96px 1fr 54px 20px;gap:10px;align-items:center;padding:6px 0;font-size:13px;color:var(--text-2)}
+.lrow .bar-p{height:6px}
+.lrow b{color:var(--text);font-weight:600}
+.lrow.pick b{color:var(--acc)}
+.oright .btn{margin-top:auto}
+
+/* ===== settings + history ===== */
+#s-settings{grid-template-columns:1fr 470px;gap:30px}
+.sleft{display:flex;flex-direction:column;min-height:0;padding-top:6px}
+.sgroup{margin-top:18px}
+.sgroup .lbl{display:block;margin-bottom:4px}
+.srow{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.srow small{display:block;color:var(--text-3);font-size:12px;margin-top:2px}
+.srow .val{display:flex;align-items:center;gap:8px;color:var(--text-2);font-size:13px;white-space:nowrap}
+.srow .val .box{height:32px;padding:0 12px;border-radius:9px;background:var(--panel);border:1px solid var(--line);display:flex;align-items:center;color:var(--text)}
+.credits{margin-top:auto;padding-top:14px;color:var(--text-3);font-size:12px;line-height:1.6}
+.credits b{color:var(--text-2);font-weight:600}
+.sright{display:flex;flex-direction:column;min-height:0;padding:18px 20px 8px}
+.hhead{display:flex;align-items:flex-end;justify-content:space-between}
+.hist{margin-top:10px}
+.hrow{display:grid;grid-template-columns:72px 1fr auto;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
+.hrow:last-child{border-bottom:0}
+.hrow img{width:72px;height:40px;border-radius:7px}
+.hrow .n{min-width:0}
+.hrow .n div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.hrow .n small{display:block;color:var(--text-3);font-size:12px;margin-top:2px;white-space:nowrap}
+.hrow .r{text-align:right;white-space:nowrap}
+.hrow .r b{color:var(--acc);font-weight:600;display:block}
+.hrow .r span{display:inline-flex;gap:4px;margin-top:4px}
+.hrow .r i{width:24px;height:22px;border-radius:6px;background:var(--raise);display:grid;place-items:center;color:var(--text-2)}
+.hday{color:var(--text-3);font-size:12px;font-weight:500;padding:10px 0 2px}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="bar">
+    <div class="brand"><div class="mark"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#02201b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2H2v2M8 2h2v2M4 10H2V8M8 10h2V8"/></svg></div>Fitclip</div>
+    <div class="url" id="url"><i data-i="link"></i><span class="v" id="urlText">clips.twitch.tv/ToughBigHabaneroHeyGuys-rPoOnphVkaMCW8lp</span><b id="urlBtn">Downloaded</b><div class="fill" id="urlFill" style="width:0"></div></div>
+    <div class="spacer"></div>
+    <div class="nav">
+      <a data-s="trim" title="Precise cut"><i data-i="scissors" style="all:unset"></i></a>
+      <a data-s="batch" title="Queue"><i data-i="queue" style="all:unset"></i><i class="cnt">3</i></a>
+      <a data-s="output" title="Output settings"><i data-i="sliders" style="all:unset"></i></a>
+      <a data-s="settings" title="Settings and history"><i data-i="gear" style="all:unset"></i></a>
+    </div>
+    <div class="win">
+      <span><svg width="10" height="10"><path d="M0 5h10" stroke="currentColor"/></svg></span>
+      <span><svg width="10" height="10"><rect x=".5" y=".5" width="9" height="9" fill="none" stroke="currentColor"/></svg></span>
+      <span><svg width="10" height="10"><path d="M0 0l10 10M10 0 0 10" stroke="currentColor"/></svg></span>
+    </div>
+  </div>
+
+  <!-- ================= 1. COMPRESS (main) ================= -->
+  <div class="screen" id="s-compress">
+    <div class="left">
+      <div class="video">
+        <img class="frame" id="cFrame" src="img/tw-frame.jpg" alt="">
+        <div class="chip" style="top:16px;left:16px"><b>ropz-ace.mp4</b> · Twitch clip · 1080p 60 fps · 57.2 MB</div>
+        <div class="ov2"><span>PGL_CS2 · ropz — ACE with 1vs4 clutch</span></div>
+        <div class="play"><i id="cPlay"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M3 1.5v9l7-4.5z" fill="#0a0c0c"/></svg></i><span class="num" id="cTime">00:21 / 01:00</span></div>
+      </div>
+      <div class="strip" id="cStrip">
+        <img src="img/tw-t0.jpg" alt=""><img src="img/tw-t1.jpg" alt=""><img src="img/tw-t2.jpg" alt=""><img src="img/tw-t3.jpg" alt=""><img src="img/tw-t4.jpg" alt=""><img src="img/tw-t5.jpg" alt=""><img src="img/tw-t6.jpg" alt=""><img src="img/tw-t7.jpg" alt=""><img src="img/tw-t8.jpg" alt=""><img src="img/tw-t9.jpg" alt="">
+        <div class="dim" id="cDimL" style="left:0;width:20%"></div>
+        <div class="dim" id="cDimR" style="left:62%;right:0"></div>
+        <div class="sel" id="cSel" style="left:20%;width:42%"></div><div class="ph" id="cPh" style="left:35%"></div>
+      </div>
+      <div class="tl"><span id="cKeep">Keeping <b class="num">00:12 – 00:37</b> · 25 s of 1:00</span><span>Drag the edges to trim</span></div>
+    </div>
+
+    <div class="right">
+      <span class="pill ok fits" id="cFits"><svg width="13" height="13" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2.5 6.2 2.3 2.3 4.7-5"/></svg><span id="cFitsT">Fits Discord Free</span></span>
+      <div class="from num" id="cFrom">57.2 MB</div>
+      <div class="to num"><span id="cTo">19.2</span><small>MB</small></div>
+      <div class="meter">
+        <div class="mbar"><i id="cFill" style="width:87.3%"></i><b style="left:90.9%"></b></div>
+        <div class="mlab"><span>0</span><span><b>20 MB</b> limit</span></div>
+      </div>
+      <div class="seg plans">
+        <span class="on"><b>20 MB</b>Free</span>
+        <span><b>50 MB</b>Basic</span>
+        <span><b>500 MB</b>Nitro</span>
+        <span><b>Custom</b>any size</span>
+      </div>
+      <div class="spec" id="cSpec"><span><b>1600×900</b> 60 fps</span><span><b>H.264</b> 6.4 Mbps</span><span><b>AAC</b> 128 kbps</span></div>
+      <div class="recent">
+        <div class="rc"><img class="thumb" src="img/tw-t7.jpg" alt=""><div class="n">ropz-ace-replay.mkv<small>41.3 MB · 2 min ago</small></div><b>19.3 MB</b></div>
+        <div class="rc"><img class="thumb" src="img/tw-t5.jpg" alt=""><div class="n">faze-bench-reaction.mov<small>16.2 MB · already fit, copied to clipboard</small></div><b>16.2 MB</b></div>
+      </div>
+      <div class="btn" id="cBtn"><div class="shade" id="cShade" style="width:0"></div><span id="cBtnT">Compress</span><small id="cBtnS">· copies to clipboard</small></div>
+    </div>
+  </div>
+
+  <!-- ================= 2. TRIM / PRECISE CUT ================= -->
+  <div class="screen" id="s-trim">
+    <div class="tleft">
+      <div class="video">
+        <img class="frame" src="img/tw-frame.jpg" alt="">
+        <div class="chip" style="top:16px;left:16px"><b>ropz-ace.mp4</b> · frame 1,279 of 3,594</div>
+        <div class="chip" style="top:16px;right:16px">In <b>00:12.483</b> · Out <b>00:37.150</b></div>
+      </div>
+      <div class="transport">
+        <div class="tbtn"><i data-i="toStart"></i></div>
+        <div class="tbtn"><i data-i="frameBack"></i></div>
+        <div class="tbtn big"><svg width="14" height="14" viewBox="0 0 12 12"><path d="M3 1.5v9l7-4.5z" fill="currentColor"/></svg></div>
+        <div class="tbtn"><i data-i="frameFwd"></i></div>
+        <div class="tbtn"><i data-i="toEnd"></i></div>
+        <div class="tc num">00:21.350<small>/ 01:00.000</small></div>
+        <div class="sp"></div>
+        <span class="pill">Speed 1×</span>
+        <span class="pill">Loop selection</span>
+      </div>
+    </div>
+
+    <div class="tright">
+      <div class="h1">Precise cut</div>
+      <div class="sub">Set in and out to the exact frame. The size estimate updates as you cut.</div>
+      <div class="field" style="margin-top:20px"><span class="k">In</span><div class="v num on">00:12.483</div><div class="nb">−1 f</div><div class="nb">+1 f</div></div>
+      <div class="field"><span class="k">Out</span><div class="v num">00:37.150</div><div class="nb">−1 f</div><div class="nb">+1 f</div></div>
+      <div class="len">Length <b class="num">24.667 s</b> · 1,479 frames at 59.94 fps · fits Free at <b>1600×900</b></div>
+      <div class="blk">
+        <span class="lbl">Cut mode</span>
+        <div class="seg cutmode"><span class="on"><b>Exact</b>re-encode, any frame</span><span><b>Fast</b>keyframes, no re-encode</span></div>
+      </div>
+      <div class="blk" style="margin-top:14px">
+        <div class="row"><div>Snap to scene changes<small>Handles stick to cuts in the video</small></div><div class="tog"></div></div>
+        <div class="row"><div>Fade audio in and out<small>0.2 s, avoids clicks at the cut</small></div><div class="tog on"></div></div>
+      </div>
+      <div class="blk" style="margin-top:18px">
+        <span class="lbl">Keys</span>
+        <div class="keys"><span><span class="kbd">I</span>set in</span><span><span class="kbd">O</span>set out</span><span><span class="kbd">←</span><span class="kbd">→</span>1 frame</span><span><span class="kbd">Shift</span>+ arrows 1 s</span><span><span class="kbd">Space</span>play</span></div>
+      </div>
+      <div class="btn"><span>Use this cut</span><small>· back to compress</small></div>
+    </div>
+
+    <div class="card tpanel">
+      <div class="ruler num" id="tRuler"></div>
+      <div class="zt">
+        <div class="zthumbs" id="tThumbs"></div>
+        <svg class="zwave" id="tWave" width="100%" height="46" preserveAspectRatio="none"></svg>
+        <div class="dim" style="left:0;width:8.28%;top:0;bottom:0"></div>
+        <div class="dim" style="left:90.5%;right:0;top:0;bottom:0"></div>
+        <div class="sel" style="left:8.28%;width:82.22%"></div>
+        <div class="hlab num" style="left:8.28%">00:12.483</div>
+        <div class="hlab num" style="left:90.5%">00:37.150</div>
+        <div class="ph" style="left:37.83%"></div>
+      </div>
+      <div class="tfoot">
+        <span>Showing <b style="color:var(--text);font-weight:600">00:10 – 00:40</b> of 1:00</span>
+        <div class="zoom"><span>Zoom</span><div class="track"><i></i><b></b></div><span>2×</span></div>
+        <span class="sp"></span>
+        <span>Waveform from the clip audio</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 3. BATCH QUEUE ================= -->
+  <div class="screen" id="s-batch">
+    <div class="bleft">
+      <div class="bhead">
+        <div><div class="h1">Queue</div><div class="sub">6 clips · each one compressed to fit Discord Free (20 MB)</div></div>
+        <div class="acts"><div class="btn sm ghost"><i data-i="plus"></i>Add files</div><div class="btn sm ghost"><i data-i="link"></i>Add link</div></div>
+      </div>
+      <div class="qhead lbl"><span></span><span>Clip</span><span>Length</span><span>Size</span><span>Status</span></div>
+      <div id="qList"></div>
+      <div class="drop">
+        <svg class="dash" preserveAspectRatio="none"><rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="15" fill="none" stroke="#2c3333" stroke-width="1.5" stroke-dasharray="6 6"/></svg>
+        <div class="ic"><i data-i="upload"></i></div>
+        <div><b>Drop videos or folders here</b><br><span style="font-size:13px">MP4, MOV, MKV, WEBM, AVI · or paste a link with Ctrl+V</span></div>
+      </div>
+    </div>
+
+    <div class="bright">
+      <span class="pill ok" style="align-self:flex-start"><i data-i="check"></i><span id="bDone">3 of 6 done</span></span>
+      <div class="from num" id="bFrom">254.0 MB</div>
+      <div class="to num"><span id="bTo">54.8</span><small>MB</small></div>
+      <div class="bstat"><span>Saved <b class="num" id="bSaved">199.2 MB</b></span><span>Running <b>2 at a time</b></span></div>
+      <div class="blk">
+        <span class="lbl">Target for every clip</span>
+        <div class="seg tgt4"><span class="on"><b>20 MB</b>Free</span><span><b>50 MB</b>Basic</span><span><b>500 MB</b>Nitro</span><span><b>Custom</b>any</span></div>
+      </div>
+      <div class="blk" style="margin-top:18px">
+        <span class="lbl">When a clip is done</span>
+        <div class="seg flat after3"><span class="on">Copy last</span><span>Show folder</span><span>Nothing</span></div>
+      </div>
+      <div class="blk" style="margin-top:10px">
+        <div class="row"><div>Skip clips that already fit<small>Copied as they are, no re-encode</small></div><div class="tog on"></div></div>
+        <div class="row"><div>Save to<small>C:\Users\you\Videos\Fitclip</small></div><i data-i="folder" style="color:var(--text-2)"></i></div>
+      </div>
+      <div class="btn ghost" style="background:var(--raise);color:var(--text)"><i data-i="pause"></i><span>Pause queue</span></div>
+    </div>
+  </div>
+
+  <!-- ================= 4. LINK IMPORT ================= -->
+  <div class="screen" id="s-import">
+    <div class="ileft">
+      <div class="video">
+        <img class="frame" src="img/tw-frame.jpg" alt="" id="iFrame">
+        <div class="chip" id="iChip" style="top:16px;left:16px"><b>ropz - ACE (with 1vs4 clutch)</b> · PGL_CS2 · Twitch clip · 1:00</div>
+        <div class="dl" id="iDl">
+          <div class="pct num"><span id="iPct">61</span><small>%</small></div>
+          <div class="what" id="iWhat">Downloading <b>1080p 60 fps MP4</b> with yt-dlp</div>
+          <div class="bar-p"><i id="iBar" style="width:61%"></i></div>
+          <div class="nums num"><span><b id="iMb">34.9</b> of 57.2 MB</span><span id="iSpeed">11.4 MB/s · about 2 s left</span></div>
+        </div>
+      </div>
+      <div class="steps" id="iSteps">
+        <div class="step done"><span class="no">1</span><div><b>Read link</b>Twitch clip</div></div>
+        <div class="step done"><span class="no">2</span><div><b>Pick format</b>1080p60, 57.2 MB</div></div>
+        <div class="step now"><span class="no">3</span><div><b>Download</b><span class="num" id="iStep3">61%</span></div></div>
+        <div class="step"><span class="no">4</span><div><b>Open to trim</b>then compress</div></div>
+      </div>
+      <div class="tl"><span>Saved to <b>Videos\Fitclip\downloads</b> · the original is kept</span><span>Esc to cancel</span></div>
+    </div>
+
+    <div class="iright">
+      <div class="h1">Import from a link</div>
+      <div class="sub">Paste a clip link in the bar. Fitclip downloads it with yt-dlp on your PC, then you trim and compress.</div>
+      <div class="blk" style="margin-top:18px">
+        <span class="lbl">Works with</span>
+        <div class="src"><span class="ic"><i data-i="film"></i></span><div class="n">Twitch<small>clips, highlights and VODs</small></div><span class="ok" id="iDet">Clip detected</span></div>
+        <div class="src"><span class="ic"><i data-i="film"></i></span><div class="n">Medal<small>public clips</small></div></div>
+        <div class="src"><span class="ic"><i data-i="film"></i></span><div class="n">YouTube<small>videos and Shorts</small></div></div>
+        <div class="src"><span class="ic"><i data-i="globe"></i></span><div class="n">Streamable, Reddit, X, Kick and more<small>any public page yt-dlp can read</small></div></div>
+      </div>
+      <div class="blk">
+        <span class="lbl">Download quality</span>
+        <div class="seg flat q3"><span class="on">Best up to 1080p</span><span>Source</span><span>720p</span></div>
+      </div>
+      <div class="blk" style="margin-top:8px">
+        <div class="row"><div>Keep yt-dlp up to date<small>Sites change often; checked once a day</small></div><div class="tog on"></div></div>
+      </div>
+      <div class="btn ghost" style="background:var(--raise);color:var(--text)"><span>Cancel download</span></div>
+    </div>
+  </div>
+
+  <!-- ================= 5. OUTPUT SETTINGS ================= -->
+  <div class="screen" id="s-output">
+    <div class="oleft">
+      <div class="h1">Output</div>
+      <div class="sub">Fitclip picks resolution, frame rate and bitrate for you. Change them here if you want control.</div>
+      <div class="codecs" style="margin-top:18px">
+        <div class="codec on"><span class="ck"><i data-i="checkInk"></i></span><b>H.264</b><small>Plays inline on every device. Default.</small></div>
+        <div class="codec"><b>H.265</b><small>Smaller at the same quality. Inline playback varies by device.</small></div>
+        <div class="codec"><b>AV1</b><small>Smallest files, slowest encode. Newer devices only.</small></div>
+      </div>
+      <div style="margin-top:16px">
+        <div class="orow"><div class="k">Encoder<small>GPU is faster, CPU hits the size best</small></div><div class="seg flat" style="grid-template-columns:repeat(5,1fr)"><span class="on">Auto</span><span>CPU x264</span><span>NVENC</span><span>Quick Sync</span><span>AMF</span></div></div>
+        <div class="orow"><div class="k">Resolution cap<small>Auto picks the largest that looks clean</small></div><div class="seg flat" style="grid-template-columns:repeat(6,1fr)"><span class="on">Auto</span><span>1080p</span><span>900p</span><span>720p</span><span>540p</span><span>480p</span></div></div>
+        <div class="orow"><div class="k">Frame rate<small>Drops to 30 only when bits run out</small></div><div class="seg flat" style="grid-template-columns:repeat(3,1fr)"><span class="on">Auto</span><span>Keep source</span><span>30 fps</span></div></div>
+        <div class="orow"><div class="k">Audio<small>AAC in MP4</small></div><div class="seg flat" style="grid-template-columns:repeat(5,1fr)"><span>160 kbps</span><span class="on">128 kbps</span><span>96 kbps</span><span>64 kbps</span><span>Mute</span></div></div>
+        <div class="orow"><div class="k">Safety margin<small>Room for container overhead</small></div><div class="seg flat" style="grid-template-columns:repeat(4,1fr)"><span>1%</span><span class="on">3%</span><span>5%</span><span>8%</span></div></div>
+        <div class="orow"><div class="k">Container<small>MP4 + H.264 + AAC plays inline most widely</small></div><div class="seg flat" style="grid-template-columns:repeat(3,1fr)"><span class="on">MP4</span><span>WebM</span><span>MKV</span></div></div>
+        <div class="orow"><div class="k">Extras</div><div class="tg"><span>Two-pass encode</span><div class="tog on"></div><span>Normalize loudness</span><div class="tog"></div><span>Fast start</span><div class="tog on"></div></div></div>
+      </div>
+    </div>
+
+    <div class="card oright">
+      <span class="lbl">How this clip was planned</span>
+      <div class="math">
+        <div class="mline"><span>Target · Free, 3% margin</span><b class="num">20 × 0.97 = 19.4 MB</b></div>
+        <div class="mline"><span>Length after trim</span><b class="num">25.0 s</b></div>
+        <div class="mline"><span>Total · 19.4 MB × 8 ÷ 25 s</span><b class="num">6.51 Mbps</b></div>
+        <div class="mline"><span>Minus audio</span><b class="num">− 0.13 Mbps</b></div>
+        <div class="mline tot"><span>Video bitrate</span><b class="num">6.38 Mbps</b></div>
+      </div>
+      <div class="formula"><b>bits per pixel</b> = video bitrate ÷ (width × height × fps)<br>Fitclip takes the largest size that keeps <b>0.07</b> or more at the source frame rate, and drops to 30 fps only if none does.</div>
+      <div class="ladder">
+        <div class="lrow"><b>1080p 60</b><div class="bar-p grey"><i style="width:51%"></i></div><span class="num">0.051</span><i data-i="x" style="color:var(--text-3)"></i></div>
+        <div class="lrow pick"><b>900p 60</b><div class="bar-p"><i style="width:74%"></i></div><span class="num" style="color:var(--text)">0.074</span><i data-i="check" style="color:var(--acc)"></i></div>
+        <div class="lrow"><b>720p 60</b><div class="bar-p grey"><i style="width:100%"></i></div><span class="num">0.115</span><span></span></div>
+      </div>
+      <div class="mline tot" style="margin-top:8px;border-top:1px solid var(--line)"><span>Two-pass result</span><b class="num" style="font-size:18px">19.2 MB · 1600×900 60 fps</b></div>
+      <div class="btn"><span>Save as default</span></div>
+    </div>
+  </div>
+
+  <!-- ================= 6. SETTINGS + HISTORY ================= -->
+  <div class="screen" id="s-settings">
+    <div class="sleft">
+      <div class="h1">Settings</div>
+      <div class="sub">Everything runs on this PC. No account, no upload, no telemetry.</div>
+      <div class="sgroup">
+        <span class="lbl">After compressing</span>
+        <div class="srow"><div>Copy the file to the clipboard<small>Paste straight into a Discord chat with Ctrl+V</small></div><div class="tog on"></div></div>
+        <div class="srow"><div>Output folder</div><div class="val"><span class="box">Videos\Fitclip</span><i data-i="folder"></i></div></div>
+        <div class="srow"><div>File name</div><div class="val"><span class="box">{name}-discord.mp4</span></div></div>
+        <div class="srow"><div>Keep the original file<small>Fitclip never overwrites your source</small></div><div class="tog on"></div></div>
+      </div>
+      <div class="sgroup">
+        <span class="lbl">App</span>
+        <div class="srow"><div>Default target</div><div class="val"><span class="box">Discord Free · 20 MB</span></div></div>
+        <div class="srow"><div>Language</div><div class="val"><span class="box">English</span><span class="box" style="color:var(--text-2)">Español</span></div></div>
+        <div class="srow"><div>Open with Fitclip in the Explorer menu<small>Right-click a video → Fit for Discord</small></div><div class="tog on"></div></div>
+        <div class="srow"><div>Check for app and yt-dlp updates<small>The only network request Fitclip makes on its own</small></div><div class="tog on"></div></div>
+      </div>
+      <div class="credits">Fitclip 1.0.0 · MIT License · Uses <b>FFmpeg</b> (LGPL/GPL) and <b>yt-dlp</b> (Unlicense).<br>Not affiliated with Discord, Twitch, Medal or YouTube.</div>
+    </div>
+
+    <div class="card sright">
+      <div class="hhead"><div><span class="lbl">History</span><div style="font-size:18px;font-weight:700;margin-top:4px">7 clips this week · 412 MB saved</div></div><span class="pill">Clear</span></div>
+      <div class="hist" id="hList"></div>
+    </div>
+  </div>
+
+  <svg class="cursor" id="cursor" viewBox="0 0 20 24"><path d="M2 1.5v17.2l4.6-4.1 3.1 6.9 2.9-1.3-3.1-6.8h6.3z" fill="#fff" stroke="#0a0c0c" stroke-width="1.4" stroke-linejoin="round"/></svg>
+</div>
+
+<script>
+const params = new URLSearchParams(location.hash.slice(1));
+const SCREEN = params.get('screen') || 'compress';
+const DEMO = params.get('demo') || '';
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const lerp = (a, b, p) => a + (b - a) * p;
+const WAVE = {"full":[0.605,0.658,0.605,0.622,0.488,0.04,0.392,0.464,0.653,0.585,0.616,0.509,0.668,0.585,0.529,0.655,0.536,0.241,0.694,0.695,0.911,0.827,0.666,0.569,0.272,0.635,0.688,0.782,0.489,0.619,0.296,0.581,0.599,0.717,0.602,0.396,0.227,0.623,0.54,0.699,0.61,0.838,0.733,0.8,0.889,0.602,0.401,0.762,0.811,0.812,1.0,0.971,0.574,0.766,0.721,0.774,0.722,0.648,0.548,0.645,0.711,0.501,0.708,0.858,0.855,0.624,0.736,0.699,0.616,0.748,0.638,0.525,0.769,0.348,0.017,0.53,0.547,0.528,0.718,0.315,0.362,0.464,0.706,0.552,0.529,0.573,0.501,0.082,0.08,0.471,0.586,0.59,0.753,0.914,0.824,0.669,0.62,0.66,0.631,0.457,0.726,0.692,0.639,0.598,0.708,0.53,0.368,0.343,0.701,0.177,0.702,0.251,0.004,0.031,0.471,0.551,0.142,0.81,0.922,0.859],"zoom":[0.988,0.829,0.594,0.69,0.823,0.712,0.566,0.706,0.506,0.547,0.613,0.334,0.261,0.179,0.281,0.432,0.706,0.541,0.565,0.633,0.656,0.821,0.727,0.531,0.524,0.386,0.395,0.725,0.629,0.101,0.081,0.135,0.434,0.611,0.537,0.395,0.489,0.472,0.638,0.657,0.718,0.548,0.511,0.487,0.617,0.589,0.176,0.051,0.143,0.319,0.052,0.405,0.734,0.49,0.474,0.299,0.627,0.517,0.54,0.791,0.43,0.493,0.689,0.728,0.811,0.718,0.458,0.619,0.843,0.637,0.89,0.596,0.917,0.683,0.782,0.557,0.663,0.361,0.618,0.076,0.052,0.063,0.949,0.711,0.536,0.862,0.752,0.366,0.943,0.76,0.794,0.892,1.0,0.999,0.791,0.814,0.4,0.028,0.799,0.793,0.731,0.509,0.603,0.745,0.587,0.7,0.643,0.742,0.654,0.706,0.583,0.625,0.675,0.418,0.055,0.011,0.852,0.457,0.28,0.85,0.656,0.569,0.687,0.555,0.058,0.546,0.736,0.437,0.695,0.703,0.976,0.581,0.725,0.708,0.864,0.577,0.559,0.547,0.708,0.566,0.701,0.454,0.637,0.757,0.613,0.164,0.72,0.535,0.782,0.679,0.433,0.65,0.615,0.614,0.51,0.183,0.761,0.689,0.617,0.526,0.095,0.094,0.025,0.005,0.004,0.008,0.069,0.822,0.356,0.651,0.42,0.282,0.626,0.453,0.32,0.761,0.755,0.472,0.132,0.031]};
+
+/* ---------- icons (line, 1.6 stroke) ---------- */
+const P = {
+  link: '<path d="M6.5 9.5 9.5 6.5M7 4.5l1.2-1.2a2.8 2.8 0 0 1 4 4L11 8.5M9 11.5l-1.2 1.2a2.8 2.8 0 0 1-4-4L5 7.5"/>',
+  scissors: '<circle cx="4.2" cy="4.5" r="2"/><circle cx="4.2" cy="11.5" r="2"/><path d="M5.9 5.6 13.5 11.5M5.9 10.4 13.5 4.5"/>',
+  queue: '<path d="M2.5 4h11M2.5 8h11M2.5 12h7"/>',
+  sliders: '<path d="M2 5h7M12.5 5H14M2 11h1.5M7 11h7"/><circle cx="10.7" cy="5" r="1.7"/><circle cx="5.3" cy="11" r="1.7"/>',
+  gear: '<circle cx="8" cy="8" r="2.2"/><path d="M8 1.8v1.8M8 12.4v1.8M1.8 8h1.8M12.4 8h1.8M3.6 3.6l1.3 1.3M11.1 11.1l1.3 1.3M3.6 12.4l1.3-1.3M11.1 4.9l1.3-1.3"/>',
+  check: '<path d="m3 8.3 3 3 7-7"/>',
+  x: '<path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/>',
+  folder: '<path d="M2 4.2h4.2l1.5 1.6H14v6.7H2z"/>',
+  copy: '<rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3.5a1 1 0 0 1 1-1h7"/>',
+  plus: '<path d="M8 3v10M3 8h10"/>',
+  upload: '<path d="M8 11V3M4.5 6.5 8 3l3.5 3.5M3 13h10"/>',
+  film: '<rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M5.5 3v10M10.5 3v10M2 8h3.5M10.5 8H14"/>',
+  globe: '<circle cx="8" cy="8" r="6"/><path d="M2 8h12M8 2c1.8 1.8 2.6 3.8 2.6 6S9.8 12.2 8 14C6.2 12.2 5.4 10.2 5.4 8S6.2 3.8 8 2z"/>',
+  pause: '<path d="M6 3.5v9M10 3.5v9"/>',
+  frameBack: '<path d="M10 4 6 8l4 4"/>',
+  frameFwd: '<path d="m6 4 4 4-4 4"/>',
+  toStart: '<path d="M4 3.5v9M12 4 8 8l4 4"/>',
+  toEnd: '<path d="M12 3.5v9M4 4l4 4-4 4"/>',
+  clock: '<circle cx="8" cy="8" r="6"/><path d="M8 4.8V8l2.2 1.5"/>',
+};
+const icon = (n, s = 16, color = 'currentColor') => `<svg width="${s}" height="${s}" viewBox="0 0 16 16" fill="none" stroke="${color}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${P[n]}</svg>`;
+$$('[data-i]').forEach(el => {
+  const n = el.dataset.i;
+  if (n === 'checkInk') { el.outerHTML = icon('check', 12, '#02201b'); return; }
+  const s = el.closest('.nav') ? 18 : 16;
+  el.outerHTML = icon(n, s);
+});
+
+/* ---------- screen switch ---------- */
+document.getElementById('s-' + SCREEN).classList.add('on');
+$$('.nav a').forEach(a => a.classList.toggle('on', a.dataset.s === SCREEN));
+const url = { text: $('#urlText'), btn: $('#urlBtn'), fill: $('#urlFill') };
+const LINK = 'clips.twitch.tv/ToughBigHabaneroHeyGuys-rPoOnphVkaMCW8lp';
+function setUrl(text, btn, typed) {
+  if (text === null) { url.text.className = ''; url.text.textContent = 'Paste a Twitch, Medal or YouTube link, or drop a video'; }
+  else { url.text.className = 'v'; url.text.innerHTML = text + (typed ? '<span class="caret"></span>' : ''); }
+  url.btn.textContent = btn;
+  url.btn.className = btn === 'Open file' ? '' : (btn === 'Fetch' ? 'go' : '');
+}
+if (['trim', 'output'].includes(SCREEN)) setUrl(LINK, 'Downloaded');
+if (['batch', 'settings'].includes(SCREEN)) setUrl(null, 'Open file');
+if (SCREEN === 'import') { setUrl(LINK, 'Downloading'); url.fill.style.width = '61%'; }
+
+/* ---------- trim: ruler, thumbs, waveform ---------- */
+(function trimView() {
+  const r = $('#tRuler');
+  for (let s = 15; s <= 35; s += 5) r.insertAdjacentHTML('beforeend', `<span style="left:${(s - 10) / 30 * 100}%">00:${String(s).padStart(2, '0')}</span>`);
+  const th = $('#tThumbs');
+  for (let i = 0; i < 20; i++) th.insertAdjacentHTML('beforeend', `<img src="img/tw-z${String(i).padStart(2, '0')}.jpg" alt="">`);
+  const w = $('#tWave'), W = 782, H = 46, z = WAVE.zoom, n = z.length, bw = W / n;
+  w.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  let h = '';
+  z.forEach((v, i) => {
+    const x = i * bw, pos = (i + .5) / n, inSel = pos > .0828 && pos < .905;
+    const bh = Math.max(2, v * (H - 4));
+    h += `<rect x="${(x + bw * .2).toFixed(1)}" y="${((H - bh) / 2).toFixed(1)}" width="${(bw * .6).toFixed(1)}" height="${bh.toFixed(1)}" rx="1" fill="${inSel ? '#2fd3bb' : '#2c3333'}"/>`;
+  });
+  w.innerHTML = h;
+})();
+
+/* ---------- batch queue rows ---------- */
+const QUEUE = [
+  { img: 'tw-t3', name: 'ropz-ace-obs.mkv', meta: 'OBS recording · 1080p 60 fps', len: '1:00', from: '214 MB', to: '19.4 MB', st: 'done' },
+  { img: 'tw-z08', name: 'ropz-1v4-clutch.mp4', meta: 'Trimmed in Fitclip · 1080p 60 fps', len: '0:25', from: '23.8 MB', to: '19.2 MB', st: 'done' },
+  { img: 'tw-t5', name: 'faze-bench-reaction.mov', meta: '1080p 60 fps', len: '0:17', from: '16.2 MB', to: '16.2 MB', st: 'fit' },
+  { img: 'tw-t7', name: 'ropz-ace-replay.mkv', meta: 'Replay · 1080p 60 fps', len: '0:12', from: '41.3 MB', to: '19.3 MB', st: 'run', p: .63 },
+  { img: 'tw-t9', name: 'ropz - ACE (with 1vs4 clutch)', meta: 'clips.twitch.tv · PGL_CS2', len: '1:00', from: '57.2 MB', to: '', st: 'dl', p: .41 },
+  { img: 'tw-t1', name: 'a-site-retake.mp4', meta: '1080p 60 fps', len: '0:41', from: '88.6 MB', to: '19.1 MB', st: 'wait' },
+];
+function qRow(q, i) {
+  let st;
+  if (q.st === 'done') st = `<div class="t okt">${icon('check', 14, '#2fd3bb')}<b>Done</b>${i === 1 ? ' · copied' : ''}</div><div class="bar-p"><i style="width:100%"></i></div>`;
+  else if (q.st === 'fit') st = `<div class="t okt">${icon('check', 14, '#2fd3bb')}<b>Already fits</b> · kept</div><div class="bar-p"><i style="width:100%"></i></div>`;
+  else if (q.st === 'run') st = `<div class="t"><b class="num" data-p="${i}">${Math.round(q.p * 100)}%</b> pass 2 of 2</div><div class="bar-p"><i data-b="${i}" style="width:${q.p * 100}%"></i></div>`;
+  else if (q.st === 'dl') st = `<div class="t"><b class="num" data-p="${i}">${Math.round(q.p * 100)}%</b> downloading · yt-dlp</div><div class="bar-p grey"><i data-b="${i}" style="width:${q.p * 100}%"></i></div>`;
+  else st = `<div class="t">Waiting · next</div><div class="bar-p"><i style="width:0"></i></div>`;
+  const to = q.st === 'wait' ? `${q.from} → …` : q.st === 'dl' ? '<b>57.2 MB</b> → …' : `${q.from} → <b class="${q.st === 'run' ? '' : 'a'}">${q.st === 'run' ? '~' : ''}${q.to}</b>`;
+  return `<div class="q" data-q="${i}"><img class="thumb" src="img/${q.img}.jpg" alt=""><div class="n"><div>${q.name}</div><small>${q.meta}</small></div><span class="d num">${q.len}</span><span class="sz num">${to}</span><div class="st">${st}</div></div>`;
+}
+function drawQueue(list) { $('#qList').innerHTML = list.map(qRow).join(''); }
+drawQueue(QUEUE);
+
+/* ---------- history ---------- */
+const HIST = [
+  ['Today', [['tw-t7', 'ropz-ace-replay-discord.mp4', '41.3 MB · 0:12 · 1080p60', '19.3 MB'], ['tw-t5', 'faze-bench-reaction.mov', '16.2 MB · already fit', '16.2 MB'], ['tw-z08', 'ropz-1v4-clutch-discord.mp4', '23.8 MB · 0:25 · 900p60', '19.2 MB']]],
+  ['Yesterday', [['tw-t3', 'ropz-ace-obs-discord.mp4', '214 MB · 1:00 · 720p30', '19.4 MB'], ['tw-t9', 'ropz-ace-discord.mp4', '57.2 MB · Twitch link · 720p30', '19.4 MB']]],
+  ['Monday', [['tw-t0', 'b-site-hold-discord.mp4', '88.6 MB · 0:41 · 720p60', '19.1 MB'], ['tw-t2', 'smoke-lineup-discord.mp4', '35.0 MB · 0:19 · 1080p60', '19.3 MB']]],
+];
+$('#hList').innerHTML = HIST.map(([d, rows]) => `<div class="hday">${d}</div>` + rows.map(([img, n, m, s]) =>
+  `<div class="hrow"><img class="thumb" src="img/${img}.jpg" alt=""><div class="n"><div>${n}</div><small>${m}</small></div><div class="r"><b class="num">${s}</b><span><i>${icon('copy', 12)}</i><i>${icon('folder', 12)}</i></span></div></div>`).join('')).join('');
+
+/* =====================================================================
+   DEMOS (deterministic: window.__seek(t, dur) drives everything)
+   ===================================================================== */
+const SEQ = [];
+function preloadSeq() {
+  for (let i = 1; i <= 72; i++) { const im = new Image(); im.src = `img/seq/f${String(i).padStart(2, '0')}.jpg`; SEQ.push(im); }
+  return Promise.all(SEQ.map(im => im.decode().catch(() => {})));
+}
+const fmt = s => `00:${String(Math.floor(s)).padStart(2, '0')}`;
+const LIMIT = 20, SCALE = 22, VFPS = +(params.get("vfps") || 6);
+
+/* --- compress: trim the clip, then compress it under 20 MB, video keeps playing --- */
+async function compressAt(t, dur) {
+  const fi = (Math.floor(t / 1000 * VFPS) * (12 / VFPS)) % 72;  // video plays at VFPS (keeps the GIF small)
+  const fr = $('#cFrame');
+  if (SEQ[fi] && fr.src !== SEQ[fi].src) { fr.src = SEQ[fi].src; try { await fr.decode(); } catch (e) {} }
+  $('#cPlay').innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12"><path d="M3.5 2v8M8.5 2v8" stroke="#0a0c0c" stroke-width="2.2" stroke-linecap="round"/></svg>';
+  $('#cTime').textContent = `${fmt(19.5 + t / 1000)} / 01:00`;
+  // trim in (0.5-2.1 s), compress (2.5-3.9 s), hold, rewind (5.3-6 s)
+  const back = ease(clamp((t - 5300) / 700));
+  const pt = ease(clamp((t - 500) / 1600)) * (1 - back);
+  const pc = clamp((t - 2500) / 1400) * (1 - back);
+  const L = lerp(0, 20, pt), R = lerp(100, 61.67, pt);
+  $('#cSel').style.left = L + '%'; $('#cSel').style.width = (R - L) + '%';
+  $('#cDimL').style.width = L + '%'; $('#cDimR').style.left = R + '%';
+  $('#cPh').style.left = lerp(L, R, .1 + .6 * (t / dur)) + '%';
+  const s0 = L / 100 * 60, s1 = R / 100 * 60, len = s1 - s0;
+  $('#cKeep').innerHTML = `Keeping <b class="num">${fmt(s0)} – ${fmt(s1)}</b> · ${Math.round(len)} s of 1:00`;
+  const trimmed = 57.2 * len / 60;                       // stream-copy size of the kept part
+  const out = lerp(trimmed, 19.2, ease(pc));
+  const fits = out <= LIMIT;
+  $('#cTo').textContent = out.toFixed(1);
+  $('#cFrom').textContent = pc > 0 || pt > .02 ? '57.2 MB' : '';
+  const fill = $('#cFill');
+  fill.style.width = Math.min(100, out / SCALE * 100) + '%';
+  fill.classList.toggle('over', !fits);
+  $('#cFits').classList.toggle('ok', fits);
+  $('#cFitsT').textContent = fits ? 'Fits Discord Free' : `${(out - LIMIT).toFixed(1)} MB over Discord Free`;
+  $('#cFits svg').style.display = fits ? '' : 'none';
+  if (pc > 0 && pc < 1) {
+    $('#cBtnT').textContent = `Compressing · pass ${pc < .45 ? 1 : 2} of 2`; $('#cBtnS').textContent = `· ${Math.round(pc * 100)}%`;
+    $('#cShade').style.width = (1 - pc) * 100 + '%';
+  } else if (pc >= 1) {
+    $('#cBtnT').textContent = 'Copied to clipboard'; $('#cBtnS').textContent = '· paste in Discord'; $('#cShade').style.width = '0';
+  } else {
+    $('#cBtnT').textContent = 'Compress'; $('#cBtnS').textContent = '· copies to clipboard'; $('#cShade').style.width = '0';
+  }
+  const bpp = 900 * 1600, v = Math.max(0.2, (19.4 * 8.388608 / len) - 0.128);
+  const res = v * 1e6 / (1920 * 1080 * 59.94) >= .07 ? ['1920×1080', 60] : v * 1e6 / (bpp * 59.94) >= .07 ? ['1600×900', 60]
+            : v * 1e6 / (1280 * 720 * 59.94) >= .07 ? ['1280×720', 60] : ['1280×720', 30];
+  $('#cSpec').innerHTML = `<span><b>${res[0]}</b> ${res[1]} fps</span><span><b>H.264</b> ${v.toFixed(1)} Mbps</span><span><b>AAC</b> 128 kbps</span>`;
+}
+
+/* --- import: paste a Twitch link, yt-dlp downloads it --- */
+function importAt(t, dur) {
+  const typed = clamp((t - 200) / 1100);
+  const fade = clamp((t - 5500) / 500);
+  const n = Math.round(LINK.length * typed);
+  if (t < 1500) setUrl(n ? LINK.slice(0, n) : null, n === LINK.length ? 'Fetch' : 'Open file', n > 0);
+  else setUrl(LINK, t < 4600 ? 'Downloading' : 'Downloaded');
+  const p = ease(clamp((t - 1700) / 2900));
+  url.fill.style.width = (t < 4900 ? p * 100 : 0) + '%';
+  $('#iPct').textContent = Math.round(p * 100);
+  $('#iBar').style.width = p * 100 + '%';
+  $('#iMb').textContent = (57.2 * p).toFixed(1);
+  const sp = (9.8 + 2.4 * Math.abs(Math.sin(t / 380))).toFixed(1);
+  $('#iSpeed').textContent = p >= 1 ? 'done' : t < 1700 ? 'reading link…' : `${sp} MB/s · about ${Math.max(1, Math.ceil((1 - p) * 4))} s left`;
+  $('#iWhat').innerHTML = t < 1700 ? 'Reading the link with <b>yt-dlp</b>' : p < 1 ? 'Downloading <b>1080p 60 fps MP4</b> with yt-dlp' : 'Downloaded · <b>opening to trim</b>';
+  const st = $$('#iSteps .step');
+  const stage = t < 1500 ? 0 : t < 1700 ? 1 : p < 1 ? 2 : 3;
+  st.forEach((s, i) => { s.classList.toggle('done', i < stage || (stage === 3 && t > 5000)); s.classList.toggle('now', i === stage && !(stage === 3 && t > 5000)); });
+  $('#iStep3').textContent = p >= 1 ? '57.2 MB' : Math.round(p * 100) + '%';
+  $('#iFrame').style.opacity = t < 1500 ? 0 : lerp(.32, 1, clamp((t - 4700) / 500)) * (1 - fade);
+  $('#iDl').style.opacity = (t < 1500 ? clamp((t - 1300) / 200) : 1) * (1 - clamp((t - 4700) / 300));
+  if (t < 1500) $('#iDl').style.opacity = 0;
+  $('#iChip').style.opacity = t < 1500 ? 0 : 1;
+  $('#iDet').style.opacity = t < 1300 ? 0 : 1;
+}
+
+/* --- batch: the running clip finishes, the link download finishes and starts compressing --- */
+function batchAt(t, dur) {
+  const p3 = lerp(.63, 1, clamp(t / 2000));
+  const p4dl = lerp(.41, 1, clamp(t / 2400));
+  const p4c = clamp((t - 2600) / 3000) * .7;
+  const fadeOut = clamp((t - 5600) / 400), fadeIn = clamp(t / 250);
+  const list = QUEUE.map(q => ({ ...q }));
+  list[3].p = p3; if (p3 >= 1) list[3].st = 'done';
+  if (p4dl < 1) list[4].p = p4dl;
+  else { list[4] = { ...list[4], st: 'run', p: p4c, to: '19.4 MB', from: '57.2 MB', meta: 'Downloaded from Twitch · 1080p 60 fps' }; }
+  drawQueue(list);
+  if (list[4].st === 'run') $(`[data-q="4"] .t`).innerHTML = `<b class="num">${Math.round(p4c * 100)}%</b> pass ${p4c < .5 ? 1 : 2} of 2`;
+  const done = 3 + (p3 >= 1 ? 1 : 0);
+  $('#bDone').textContent = `${done} of 6 done`;
+  const from = 254.0 + (p3 >= 1 ? 41.3 : 0), to = 54.8 + (p3 >= 1 ? 19.3 : 0);
+  $('#bFrom').textContent = from.toFixed(1) + ' MB'; $('#bTo').textContent = to.toFixed(1); $('#bSaved').textContent = (from - to).toFixed(1) + ' MB';
+  const o = Math.min(fadeIn, 1 - fadeOut);
+  $('#qList').style.opacity = o; $('.bright .to').style.opacity = lerp(.4, 1, o);
+}
+
+async function run(t, dur) {
+  if (DEMO === 'compress') await compressAt(t, dur);
+  if (DEMO === 'import') importAt(t, dur);
+  if (DEMO === 'batch') batchAt(t, dur);
+}
+window.__seek = async (t, dur) => { window.__ext = true; await run(t, dur); };   // renderer takes over, live loop stops
+if (DEMO) {
+  const go = () => {
+    run(0, 6000);
+    const t0 = performance.now();
+    (async function loop() {
+      if (window.__ext) return;
+      await run((performance.now() - t0) % 6000, 6000);
+      requestAnimationFrame(loop);
+    })();
+  };
+  if (DEMO === 'compress') { window.__ready = preloadSeq(); window.__ready.then(go); } else go();
+}
+</script>
+</body>
+</html>

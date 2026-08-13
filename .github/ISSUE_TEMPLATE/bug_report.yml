@@ -1,0 +1,54 @@
+name: Bug report
+description: Something is not working in Fitclip
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Please search [existing issues](https://github.com/DirectorEliminate/fitclip/issues) first.
+        Tip: *Settings → Copy diagnostics* fills most fields below. It has no file names or paths.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: Steps to reproduce, what you expected and what you got.
+      placeholder: "1. Paste a Twitch clip link  2. Trim to 0:25  3. Compress to 20 MB Free  4. File is 20.4 MB and Discord rejects it"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options: [Compress / size planning, Trim / precise cut, Link import (yt-dlp), Batch queue, Output settings, Clipboard, Settings / history, Installer / updates, Other]
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options: [Windows 11, Windows 10, macOS (Apple Silicon), macOS (Intel), Linux]
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Fitclip version
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Source video
+      description: Resolution, fps, codec, length, size, and where it came from (file, Twitch, Medal, YouTube…).
+      placeholder: "1920×1080 60 fps H.264, 1:00, 57.2 MB, Twitch clip"
+  - type: input
+    id: target
+    attributes:
+      label: Target and result
+      placeholder: "20 MB Free → got 20.4 MB, 1600×900 60 fps, H.264 NVENC"
+  - type: textarea
+    id: logs
+    attributes:
+      label: Diagnostics / log
+      render: shell
