@@ -14,7 +14,6 @@ No upload, no watermark, no account, no file size cap.
 
 <p>
 <a href="https://github.com/DirectorEliminate/fitclip/releases/latest"><img src="https://img.shields.io/github/v/release/DirectorEliminate/fitclip?style=flat-square&labelColor=121515&color=2fd3bb&label=release" alt="Latest release of Fitclip"></a>
-<a href="https://github.com/DirectorEliminate/fitclip/releases"><img src="https://img.shields.io/github/downloads/DirectorEliminate/fitclip/total?style=flat-square&labelColor=121515&color=222727&label=downloads" alt="Fitclip total downloads"></a>
 <a href="https://github.com/DirectorEliminate/fitclip/stargazers"><img src="https://img.shields.io/github/stars/DirectorEliminate/fitclip?style=flat-square&labelColor=121515&color=222727" alt="Fitclip GitHub stars"></a>
 <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-222727?style=flat-square&labelColor=121515" alt="MIT license"></a>
 <img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-222727?style=flat-square&labelColor=121515" alt="Windows, macOS and Linux">
