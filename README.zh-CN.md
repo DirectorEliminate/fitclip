@@ -14,7 +14,6 @@ Fitclip 是一款免费开源的 Discord 视频压缩工具，支持 Windows、m
 
 <p>
 <a href="https://github.com/DirectorEliminate/fitclip/releases/latest"><img src="https://img.shields.io/github/v/release/DirectorEliminate/fitclip?style=flat-square&labelColor=121515&color=2fd3bb&label=release" alt="Fitclip 最新版本"></a>
-<a href="https://github.com/DirectorEliminate/fitclip/releases"><img src="https://img.shields.io/github/downloads/DirectorEliminate/fitclip/total?style=flat-square&labelColor=121515&color=222727&label=downloads" alt="Fitclip 总下载量"></a>
 <a href="https://github.com/DirectorEliminate/fitclip/stargazers"><img src="https://img.shields.io/github/stars/DirectorEliminate/fitclip?style=flat-square&labelColor=121515&color=222727" alt="Fitclip GitHub 星标数"></a>
 <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-222727?style=flat-square&labelColor=121515" alt="MIT 许可证"></a>
 <img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-222727?style=flat-square&labelColor=121515" alt="支持 Windows、macOS 和 Linux">
