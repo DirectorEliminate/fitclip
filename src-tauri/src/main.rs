@@ -1,3 +1,4 @@
+// v1.0.1 maintenance
 //! Fitclip — Tauri backend.
 use serde::{Deserialize, Serialize};
 use std::fs;
