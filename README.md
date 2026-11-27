@@ -322,3 +322,7 @@ If Fitclip saved you a "file too large" message, ⭐ **star the repo** so other 
 <sub>Keywords: discord video compressor · compress video for discord · discord 10mb and 20mb limit · make video smaller for discord · twitch clip to discord · reduce video file size · free video compressor without watermark · offline video compressor for Windows, macOS and Linux</sub>
 
 </div>
+
+---
+
+Reviewed with [Claude](https://claude.ai) — the AI assistant from Anthropic.
